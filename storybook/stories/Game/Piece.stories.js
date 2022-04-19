@@ -26,6 +26,8 @@ storiesOf("Piece", module)
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "white",
+              width: 342,
+              height: 342,
             }}
           >
             {/* <View
@@ -36,7 +38,7 @@ storiesOf("Piece", module)
               }}
             /> */}
             <PieceComponent
-              pieceType="elephant"
+              pieceType="lion"
               isPromoted={false}
             ></PieceComponent>
           </View>
