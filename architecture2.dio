@@ -1,0 +1,46 @@
+<mxfile host="65bd71144e">
+    <diagram id="d4qnML8jgb9nKMwPVRTb" name="Page-1">
+        <mxGraphModel dx="643" dy="491" grid="1" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="5" style="edgeStyle=none;html=1;" edge="1" parent="1" source="2" target="3">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="Components&lt;br&gt;&lt;br&gt;Dumb part of the UI" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="680" y="280" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" style="edgeStyle=none;html=1;" edge="1" parent="1" source="3" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" style="edgeStyle=none;html=1;" edge="1" parent="1" source="3" target="11">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Contexts / Presenters&lt;br&gt;&lt;br&gt;Smart part of the UI&lt;br&gt;&lt;br&gt;Invokes interactors, listens to their events&lt;br&gt;&lt;br&gt;Has Redux state" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="280" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" style="edgeStyle=none;html=1;" edge="1" parent="1" source="4" target="6">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="edgeStyle=none;html=1;" edge="1" parent="1" source="4" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Interactors / Use Cases&lt;br&gt;&lt;br&gt;Command interface&lt;br&gt;&lt;br&gt;Inform state plugin of changes&lt;br&gt;&lt;br&gt;Perform side effects&lt;br&gt;(persistence, etc.)&lt;br&gt;&lt;br&gt;Emit events from network I/O" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="280" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Entities&lt;br&gt;&lt;br&gt;Pure functional" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="280" width="160" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="State plugin&lt;br&gt;(Interface, actions)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="200" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=none;html=1;" edge="1" parent="1" source="11" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="State plugin&lt;br&gt;(Implementation, reducers)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="500" y="200" width="120" height="60" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
