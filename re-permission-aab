@@ -1,0 +1,34 @@
+#!/bin/bash
+
+set -e
+
+android_publishing=$HOME/Documents/animal-showdown/android-publishing
+
+packed_file=$1
+unpacked_dir=$( mktemp -d )
+repacked_file=${2:-$( basename "$1" )}
+
+original_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.xml
+encoded_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.encoded.xml
+decoded_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.decoded.xml
+
+./unpack-aab "$packed_file" "$unpacked_dir"
+
+echo "patching $decoded_manifest_file"
+patch "$decoded_manifest_file" "AndroidManifest.xml.patch"
+# cat << EOS | ./xml-patch "$decoded_manifest_file" - "$decoded_manifest_file"
+#   <diff xmlns:android="http://schemas.android.com/apk/res/android">
+#   <remove sel="manifest/uses-permission[@android:name='android.permission.READ_PHONE_STATE']" />
+#   <remove sel="manifest/application/@android:localeConfig" />
+#   </diff>
+# EOS
+echo "patched $decoded_manifest_file"
+
+./repack-aab "$unpacked_dir" "$repacked_file"
+
+jarsigner \
+  -keystore "file:$android_publishing/keystore.jks" \
+  -storepass "$( cat $android_publishing/keystore-password.txt )" \
+  -keypass "$( cat $android_publishing/key-password.txt )" \
+  $repacked_file \
+  "$( cat "$android_publishing/key-alias.txt" )"

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+unpacked_dir=$1
+packed_file=$2
+
+original_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.xml
+encoded_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.encoded.xml
+decoded_manifest_file=$unpacked_dir/base/manifest/AndroidManifest.decoded.xml
+
+protoc --encode=aapt.pb.XmlNode Configuration.proto Resources.proto < "$decoded_manifest_file" > "$encoded_manifest_file"
+
+mv "$encoded_manifest_file" "$original_manifest_file"
+rm "$decoded_manifest_file"
+
+packed_file_abs="$( realpath "$packed_file" )"
+pushd "$unpacked_dir"
+zip -r -D "$packed_file_abs" *
+popd
+
+mv "$original_manifest_file" "$encoded_manifest_file"
+protoc --decode=aapt.pb.XmlNode Configuration.proto Resources.proto < "$encoded_manifest_file" > "$decoded_manifest_file"

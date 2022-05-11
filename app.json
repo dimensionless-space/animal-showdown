@@ -28,7 +28,8 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "space.dimensionless.animal_showdown",
-      "permissions": []
+      "permissions": [],
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

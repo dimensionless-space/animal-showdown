@@ -61,7 +61,7 @@
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
     "babel-loader": "^8.2.4",
-    "eas-cli": "^0.50.0",
+    "eas-cli": "^0.51.0",
     "esbuild": "^0.14.11",
     "esbuild-jest": "^0.5.0",
     "eslint": "^7.32.0",

@@ -1,0 +1,88 @@
+#!/bin/bash
+
+set -e
+
+android_publishing=$HOME/Documents/animal-showdown/android-publishing
+tmp_dir=$( mktemp -d )
+archive_dir="$tmp_dir/archive.apks"
+zipped_apks_dir="$tmp_dir/zipped_apks"
+unzipped_apks_dir="$tmp_dir/unzipped_apks"
+
+if [ -d "$unzipped_apks_dir" ]
+then
+  rm -rf "$unzipped_apks_dir"
+fi
+
+if [ ! -d "$unzipped_apks_dir" ]
+then
+  mkdir -p "$unzipped_apks_dir"
+fi
+
+if [ ! -d "$outdir" ]
+then
+  echo "starting to build apks archive to $archive_dir"
+  bundletool build-apks \
+  --bundle="$1" \
+  --output="$archive_dir" \
+  --ks="$android_publishing/keystore.jks" \
+  --ks-pass="file:$android_publishing/keystore-password.txt" \
+  --ks-key-alias="$( cat "$android_publishing/key-alias.txt" )" \
+  --key-pass="file:$android_publishing/key-password.txt"
+  echo "finished building apks archive to $archive_dir"
+fi
+
+if [ ! -d "$zipped_apks_dir" ]
+then
+  echo "starting to unzip apks archive to $zipped_apks_dir"
+  unzip -d "$zipped_apks_dir" "$archive_dir"
+  echo "finished unzipping apks archive to $zipped_apks_dir"
+fi
+
+zipped_master_apks=$( ls $zipped_apks_dir/splits/base-master*.apk )
+
+for zipped_master_apk in $zipped_master_apks
+do
+  unzipped_master_apk="$( echo $zipped_master_apk | sed "s|$zipped_apks_dir/splits|$unzipped_apks_dir|" )"
+  manifest="$unzipped_master_apk/AndroidManifest.xml"
+
+  if [ ! -d "$unzipped_master_apk" ]
+  then
+    echo "starting apktool decompile of $zipped_master_apk"
+    apktool d -o "$unzipped_master_apk" "$zipped_master_apk"
+    echo "finished apktool decompile"
+  fi
+
+  echo "patching $manifest"
+  cat << EOS | ./xml-patch "$manifest" - "$manifest"
+<diff xmlns:android="http://schemas.android.com/apk/res/android">
+  <remove sel="manifest/uses-permission[@android:name='android.permission.READ_PHONE_STATE']" />
+  <remove sel="manifest/application/@android:localeConfig" />
+</diff>
+EOS
+  echo "patched $manifest"
+
+  if [ ! -f "$zipped_master_apk.unaligned" ]
+  then
+    echo "starting apktool build of $unzipped_master_apk"
+    apktool b -f -o "$zipped_master_apk.unaligned" "$unzipped_master_apk"
+    echo "finished apktool build of $unzipped_master_apk"
+  fi
+
+  echo "starting zipalign on $zipped_master_apk"
+  rm "$zipped_master_apk"
+  $ANDROID_HOME/build-tools/32.0.0/zipalign -p 4 "$zipped_master_apk.unaligned" "$zipped_master_apk"
+  rm "$zipped_master_apk.unaligned"
+  echo "finished zipalign on $zipped_master_apk"
+
+  echo "starting signing $zipped_master_apk"
+  $ANDROID_HOME/build-tools/32.0.0/apksigner sign \
+  --ks "$android_publishing/keystore.jks" \
+  --ks-pass "file:$android_publishing/keystore-password.txt" \
+  --ks-key-alias "$( cat "$android_publishing/key-alias.txt" )" \
+  --key-pass="file:$android_publishing/key-password.txt" \
+  "$zipped_master_apk"
+  rm "$zipped_master_apk.idsig"
+  echo "finished signing $zipped_master_apk"
+done
+
+echo "done"
